@@ -11,5 +11,10 @@
 
   <body>
     <%= yield %>
+
+    <hr>
+    <% if user_signed_in? %>
+      <p><%= link_to('Logout', destroy_user_session_path) %></p>
+    <% end %>
   </body>
 </html>

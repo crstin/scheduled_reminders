@@ -19,6 +19,7 @@ class RemindersController < ApplicationController
 
     if @reminder.save
       redirect_to @reminder, notice: 'Reminder was successfully created.'
+      set_email_schedule
     else
       render :new
     end
@@ -27,6 +28,7 @@ class RemindersController < ApplicationController
   def update
     if @reminder.update(reminder_params)
       redirect_to @reminder, notice: 'Reminder was successfully updated.'
+      set_email_schedule
     else
       render :edit
     end
@@ -47,5 +49,9 @@ class RemindersController < ApplicationController
   # Only allow a list of trusted parameters through.
   def reminder_params
     params.require(:reminder).permit(:title, :body, :date, :user_id)
+  end
+
+  def set_email_schedule
+    ReminderMailer.schedule_email(@reminder, current_user.email).deliver_later!(wait_until: @reminder.date)
   end
 end
